@@ -22,7 +22,9 @@ jobs:
           cache: pnpm
 
       - name: Install
-        run: pnpm install
+        # --frozen-lockfile: the lockfile is part of the export, so a dependency
+        # bump has to be a visible commit rather than a silent resolution drift.
+        run: pnpm install --frozen-lockfile
 
       - name: Type check
         run: pnpm run check
