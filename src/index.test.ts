@@ -270,8 +270,15 @@ test("REGISTRY_ENTRY_SCHEMA rejects bad ids / repos / tags / hashes / pairing", 
 });
 
 test("isOfficial derives first-party status from the repo owner", () => {
-	assert.equal(isOfficial({ repo: "bingryan/official" }), true);
+	// Both namespaces count while the organisation migration is in flight:
+	// poly-creator is the destination, bingryan is the historical account whose
+	// existing first-party repos a transfer keeps reachable.
+	assert.equal(isOfficial({ repo: "poly-creator/plugin-sdk" }), true);
+	assert.equal(isOfficial({ repo: "bingryan/color-tag" }), true);
+	// A third party cannot claim the badge by lying about its owner.
 	assert.equal(isOfficial({ repo: "someone-else/unofficial" }), false);
+	assert.equal(isOfficial({ repo: "poly-creator-lookalike/plug" }), false);
+	assert.equal(isOfficial({ repo: "notpoly-creator/plug" }), false);
 });
 
 test("REGISTRY_SCHEMA wraps entries under schema_version 2", () => {

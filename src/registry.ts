@@ -24,8 +24,9 @@
  *   - `asset` filenames are NOT stored: latest mode uses the alias
  *     convention, pinned mode derives `<id>-<version>.zip` from the tag.
  *   - First-party (`official`) status is derived from the repo owner
- *     (`repo.startsWith("bingryan/")`); see {@link isOfficial}. Not stored,
- *     so third-party entries can't claim the badge by accident.
+ *     (`poly-creator/`, plus `bingryan/` while the organisation migration is
+ *     in flight); see {@link isOfficial}. Not stored, so third-party entries
+ *     can't claim the badge by accident.
  */
 import { z } from "zod";
 import { SAFE_PLUGIN_ID } from "./safe-id.ts";
@@ -82,11 +83,19 @@ export function isPinnedEntry(entry: { tag?: unknown; sha256?: unknown }): boole
 	return typeof entry.tag === "string";
 }
 
-/** First-party derivation: any entry whose repo lives under the `bingryan/`
- * GitHub org is PolyCreator-maintained. Derived at read time so third-party
- * entries cannot claim `official` status by lying in the registry file. */
+/** First-party derivation: an entry whose repo lives under one of the
+ * project's own GitHub namespaces is PolyCreator-maintained. Derived at read
+ * time so third-party entries cannot claim `official` status by lying in the
+ * registry file.
+ *
+ * Two prefixes during the organisation migration: `poly-creator/` is the
+ * destination and `bingryan/` is the historical personal account (existing
+ * first-party repos still live there, and a transfer keeps the old URLs
+ * working). Drop `bingryan/` once nothing official lives there. */
+const FIRST_PARTY_OWNERS = ["poly-creator/", "bingryan/"] as const;
+
 export function isOfficial(entry: { repo: string }): boolean {
-	return entry.repo.startsWith("bingryan/");
+	return FIRST_PARTY_OWNERS.some((owner) => entry.repo.startsWith(owner));
 }
 
 /**
