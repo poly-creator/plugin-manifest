@@ -1,0 +1,49 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+
+      - name: Install
+        run: pnpm install
+
+      - name: Type check
+        run: pnpm run check
+
+      - name: Build
+        run: pnpm run build
+
+      # Node's own runner with type stripping — no test framework needed here.
+      - name: Test
+        run: pnpm test
+
+      # The invariant this repository exists to keep: what ships says what it
+      # ships. A `.ts` specifier inside an emitted `.js`/`.d.ts` is unresolvable
+      # for every consumer (ERR_MODULE_NOT_FOUND / TS2835) and was shipped once.
+      - name: Tarball contents and emitted specifiers
+        run: |
+          npm pack --dry-run > pack.txt 2>&1
+          for want in dist/index.js dist/index.d.ts README.md LICENSE; do
+            grep -q "$want" pack.txt || { echo "::error::$want is missing from the tarball"; exit 1; }
+          done
+          if grep -rEn '"\.{1,2}/[^"]*\.(ts|tsx|mts|cts)"' dist --include="*.js" --include="*.d.ts"; then
+            echo "::error::emitted files reference a TypeScript extension"
+            exit 1
+          fi

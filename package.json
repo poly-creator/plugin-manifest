@@ -1,0 +1,52 @@
+{
+	"name": "@polycreator/plugin-manifest",
+	"version": "0.3.1",
+	"description": "Shared plugin-manifest validation for the polycreator plugin marketplace — safe-id gate, required fields, entry-file hashing order, dependency floors, and the marketplace zod schema. Zero-framework erasable TS: runs directly under Node 24 type-stripping and bundles into Workers/Astro.",
+	"keywords": [
+		"manifest",
+		"marketplace",
+		"plugin",
+		"polycreator",
+		"validation"
+	],
+	"homepage": "https://github.com/poly-creator/plugin-manifest#readme",
+	"bugs": {
+		"url": "https://github.com/poly-creator/plugin-manifest/issues"
+	},
+	"license": "MIT",
+	"author": "PolyCreator",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/poly-creator/plugin-manifest.git"
+	},
+	"files": [
+		"dist",
+		"README.md",
+		"LICENSE"
+	],
+	"type": "module",
+	"sideEffects": false,
+	"main": "./dist/index.js",
+	"types": "./dist/index.d.ts",
+	"exports": {
+		".": {
+			"types": "./dist/index.d.ts",
+			"default": "./dist/index.js"
+		}
+	},
+	"scripts": {
+		"build": "tsc -p tsconfig.build.json && node scripts/rewrite-dts-imports.mjs dist",
+		"clean": "rm -rf dist",
+		"prepublishOnly": "pnpm clean && pnpm build",
+		"check": "tsc -p tsconfig.json --noEmit",
+		"test": "node --test src/**/*.test.ts"
+	},
+	"dependencies": {
+		"zod": "^4.4.3"
+	},
+	"devDependencies": {
+		"typescript": "^5.9.3",
+		"@types/node": "^24.13.3"
+	},
+	"packageManager": "pnpm@10.14.0+sha512.ad27a79641b49c3e481a16a805baa71817a04bbe06a38d17e60e2eaee83f6a146c6a688125f5792e48dd5ba30e7da52a5cda4c3992b9ccf333f9ce223af84748"
+}
