@@ -1,6 +1,10 @@
 # @polycreator/plugin-manifest
 
-Shared plugin-manifest validation for the polycreator marketplace.
+[![npm](https://img.shields.io/npm/v/%40polycreator%2Fplugin-manifest)](https://www.npmjs.com/package/@polycreator/plugin-manifest)
+[![CI](https://github.com/poly-creator/plugin-manifest/actions/workflows/ci.yml/badge.svg)](https://github.com/poly-creator/plugin-manifest/actions/workflows/ci.yml)
+[![provenance](https://img.shields.io/badge/provenance-signed-blue?logo=npm)](https://www.npmjs.com/package/@polycreator/plugin-manifest)
+
+Shared plugin-manifest validation for the PolyCreator marketplace.
 
 The desktop main process (`apps/desktop/electron/main/features/plugins/*`)
 stays the authority for **install-time** enforcement; this package is the
@@ -31,11 +35,12 @@ Zero-dependency erasable TS: runs directly under Node 24 type-stripping
 ## Development
 
 ```bash
-pnpm --filter @polycreator/plugin-manifest build  # tsc → dist/
-pnpm --filter @polycreator/plugin-manifest test   # node --test (no vitest)
+pnpm install
+pnpm run build   # tsc → dist/
+pnpm test        # node --test (no test framework)
 ```
 
-The package must never depend on `vitest` / `@vitejs/plugin-react` /
-`@tailwindcss/vite` / `@vitest/*` — the root pnpm override pins those vite
-consumers to the desktop's forked vite; this subtree intentionally stays off
-it (see the web app README "守则").
+Deliberately dependency-free: no test framework, no bundler, no React. The
+marketplace imports this as source and lets its own bundler inline it, while the
+registry validator and plugin authors consume the compiled `dist/` — so a
+toolchain dependency here would propagate into all of them.
