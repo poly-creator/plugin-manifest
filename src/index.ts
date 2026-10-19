@@ -16,4 +16,5 @@ export * from "./manifest.ts";
 export * from "./entry-order.ts";
 export * from "./dependencies.ts";
 export * from "./schema.ts";
+export * from "./theme.ts";
 export * from "./registry.ts";

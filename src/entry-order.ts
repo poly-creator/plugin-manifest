@@ -6,7 +6,8 @@
  * agree on this order:
  *
  *   - desktop  `computePluginIntegrity` (integrity.ts:48) — iterates
- *     `[main, nodeEntry]`, hashing each file in declaration order.
+ *     `[main, nodeEntry, ...theme.files]`, hashing each file in declaration
+ *     order.
  *   - marketplace upload pipeline + registry validator
  *     (`validate-registry.mjs` gate 7) — hash the same entry list in the
  *     same order over the raw bytes.
@@ -15,10 +16,17 @@
  * different digest and breaks install-on-device.
  */
 
-/** The executable-surface file order to hash: `[main, nodeEntry?]`. */
-export function entryFileOrder(manifest: { main: string; nodeEntry?: string }): string[] {
-	const order: string[] = [manifest.main];
+/** The executable/data-surface file order to hash:
+ *  `[main?, nodeEntry?, ...theme.files]` — declaration order, falsy skipped. */
+export function entryFileOrder(manifest: {
+	main?: string;
+	nodeEntry?: string;
+	theme?: { files: string[] };
+}): string[] {
+	const order: string[] = [];
+	if (manifest.main) order.push(manifest.main);
 	if (manifest.nodeEntry) order.push(manifest.nodeEntry);
+	for (const file of manifest.theme?.files ?? []) order.push(file);
 	return order;
 }
 
@@ -28,10 +36,11 @@ export function entryFileOrder(manifest: { main: string; nodeEntry?: string }): 
  * the same function runs in the upload pipeline, pack scripts, and tests.
  *
  * @param entries — the entry files, keyed by their declared path
- *                  (`main` / `nodeEntry`). Missing keys throw.
+ *                  (`main` / `nodeEntry` / each of `theme.files`). Missing
+ *                  keys throw.
  */
 export async function digestEntryFiles(
-	manifest: { main: string; nodeEntry?: string },
+	manifest: { main?: string; nodeEntry?: string; theme?: { files: string[] } },
 	entries: Map<string, Uint8Array>,
 ): Promise<string> {
 	const order = entryFileOrder(manifest);

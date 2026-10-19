@@ -1,6 +1,6 @@
 {
 	"name": "@polycreator/plugin-manifest",
-	"version": "0.3.5",
+	"version": "0.4.0",
 	"description": "Shared plugin-manifest validation for the polycreator plugin marketplace — safe-id gate, required fields, entry-file hashing order, dependency floors, and the marketplace zod schema. Zero-framework erasable TS: runs directly under Node 24 type-stripping and bundles into Workers/Astro.",
 	"keywords": [
 		"manifest",
