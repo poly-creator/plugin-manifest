@@ -1,5 +1,11 @@
 # @polycreator/plugin-manifest
 
+Shared plugin-manifest validation for the PolyCreator marketplace.
+
+> The app these manifests describe: **https://polycreator.si** — the
+> [marketplace](https://polycreator.si/plugins) and the
+> [author guide](https://polycreator.si/docs/publish).
+
 [![npm](https://img.shields.io/npm/v/%40polycreator%2Fplugin-manifest)](https://www.npmjs.com/package/@polycreator/plugin-manifest)
 [![CI](https://github.com/poly-creator/plugin-manifest/actions/workflows/ci.yml/badge.svg)](https://github.com/poly-creator/plugin-manifest/actions/workflows/ci.yml)
 [![provenance](https://img.shields.io/badge/provenance-signed-blue?logo=npm)](https://www.npmjs.com/package/@polycreator/plugin-manifest)
